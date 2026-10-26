@@ -9,7 +9,7 @@ Write it for someone who has never run a usability test. Plain words, no researc
 ```markdown
 # Test the new flow with real people
 
-**What you need:** the prototype (`prototype.html`) on the device your customers use, 5 people, about 15 minutes each.
+**What you need:** the prototype (`prototype.html`) on the device your customers use, 5 people, about 20 minutes each.
 
 ## Who to ask
 
@@ -19,15 +19,23 @@ Write it for someone who has never run a usability test. Plain words, no researc
 
 "Thanks for helping. I'm testing the app, not you, so you can't do anything wrong. Please think out loud as you go. I can't help you once we start, but tell me if you'd give up, and we'll stop there."
 
-## The task (read it out, then stay quiet)
+## The tasks (read each one out, then stay quiet)
 
-"<One sentence describing the core win as a real-life goal, without using any words from the product's screens. For example: 'Imagine you want to see your doctor next Tuesday. Use this to arrange it.'>"
+1. "<First run: the core win as a real-life goal, without using any words from the product's screens. For example: 'Imagine you want to see your doctor next Tuesday. Use this to arrange it.'>"
+2. "<A second core job, as a real-life goal.>"
+3. "<A third core job, or 'coming back': something they'd do a week later.>"
+4. "<A finding task: something occasional that now lives under More options or Advanced. For example: 'You've moved house. Change the address on your account.'>"
+
+Keep it to four tasks. If they get stuck on one, move on to the next.
 
 ## Watch for (tick when it happens)
 
 | What to watch | Person 1 | 2 | 3 | 4 | 5 |
 |---|---|---|---|---|---|
-| Finished without help | | | | | |
+| Task 1 finished without help | | | | | |
+| Task 2 finished without help | | | | | |
+| Task 3 finished without help | | | | | |
+| Task 4: found it (where did they look first?) | | | | | |
 | <the 2–3 report findings that most need confirming, e.g. "Paused at the 'Choose a plan' screen"> | | | | | |
 | Said something was confusing (write what) | | | | | |
 | Would they pay for this? (ask at the end: yes / maybe / no) | | | | | |

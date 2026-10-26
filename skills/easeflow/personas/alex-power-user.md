@@ -24,7 +24,7 @@ Alex has used two competing products for years and knows the domain deeply. They
 - Simple mode can't be expanded, and there's no "Advanced" path.
 
 ## Patience budget
-Finds any advanced capability within **2 clicks** from a logical place (Settings, Advanced, or the context where it applies).
+Finds every advanced capability within **3 clicks from home**, starting from a logical place (the object or job it belongs to, the Advanced section, or Settings).
 
 ## Watch for
 - [ ] Is onboarding skippable in one click?
@@ -33,7 +33,7 @@ Finds any advanced capability within **2 clicks** from a logical place (Settings
 - [ ] Are defaults overridable?
 
 ## Pass condition
-Doesn't fail: every capability they need is still reachable, and simplification never traps them in a beginner mode.
+Finds and uses every Advanced feature in the feature ledger within budget, and simplification never traps them in a beginner view. If the product has an Advanced mode, switching to it is obvious and it only adds tools.
 
 ## Voice
 > "Fine, skip the tour. Where are the bulk edit and export tools? They were in the sidebar before. Okay, under Advanced. Good."

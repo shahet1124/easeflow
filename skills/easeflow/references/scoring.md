@@ -1,10 +1,12 @@
 # EaseFlow scoring
 
-Score every persona twice: once on the current flow, once on the proposed flow. The score shows *how easy* the flow is. Pass/fail shows *whether they made it*. Report both.
+Score every persona twice: once on the current product, once on the proposed one. The score shows *how easy* it is. Pass/fail shows *whether they made it*. Report both.
+
+Score **each task separately** (first run, each core job, coming back, recovery, each regular job). A persona's **overall score** is the average of their task scores, and their **overall result** is Pass only if they pass every task on their list.
 
 ## Metric definitions
 
-Count these along the path from first contact (landing page, install, invite or first open) to the core win.
+Count these along each task's path. For first run, that's from first contact (landing page, install, invite or first open) to the core win. For other jobs, it's from the home screen to the job's outcome.
 
 | Metric | Counts as one |
 |---|---|
@@ -16,6 +18,8 @@ Count these along the path from first contact (landing page, install, invite or 
 | **Unhelpful error** | An error that's technical, blames the user, or doesn't say how to fix it. |
 | **Trust gap** | A commitment made blind: payment, a permission grant, sending or deleting without explanation, preview or undo. |
 | **Nav load** | Navigation items (sidebar, tabs, top menu, bottom bar) visible on the first real screen after entry. |
+| **Clicks from home** | For a feature: the fewest clicks from the home screen to use it. |
+| **Findability** | For a feature: whether a blind walker found it without help, and how many places they looked first. |
 
 ## Persona score (0–100)
 
@@ -45,18 +49,19 @@ Start at 100 and subtract:
 
 ## Pass / fail per persona
 
-**Pass** = the persona reaches the core win **alone** (only the one-time guided onboarding) **within their patience budget**, with no Blocker.
+**Pass** (per task) = the persona completes the task **alone** (only the one-time guided onboarding) **within their patience budget**, with no Blocker. Patience budgets in persona files apply to **each task**.
 
-For the guardrail persona (Alex), use **Pass** or **Fail** based on their own pass condition: every capability they need is still reachable.
+For the guardrail persona (Alex), **Pass** means every Advanced feature was found within 3 clicks from home and works.
 
 ## Product verdict
 
 The product **passes EaseFlow** only when all of these are true:
 
-1. Harold passes.
-2. The Literal Follower passes.
-3. Alex does not fail.
+1. Harold passes first run and every core job.
+2. The Literal Follower passes first run, every core job and every regular job.
+3. Alex passes (every Advanced feature found within 3 clicks).
 4. No Blockers remain in the friction register.
+5. Coverage is 100%: every feature in the ledger has a home, and none is lost.
 
 Report the verdict as one line: `EaseFlow verdict: PASS` or `EaseFlow verdict: FAIL — <the main reason>`.
 
@@ -66,9 +71,18 @@ Always include this table for both flows:
 
 | Metric | Current | Proposed |
 |---|---|---|
-| Steps to core win | | |
+| Steps to core win (first run) | | |
+| Average steps per core job | | |
 | Decisions before core win | | |
-| Jargon terms before core win | | |
+| Jargon terms across core jobs | | |
 | Dead ends | | |
 | Nav items on first screen | | |
 | Trust gaps | | |
+| Features found by blind walkers (%) | | |
+| Advanced features within 3 clicks (%) | | |
+| Features kept (of total) | N/N | N/N |
+
+And a per-job table:
+
+| Job | Tier | Harold (current → proposed) | Literal Follower | Steps (current → proposed) |
+|---|---|---|---|---|

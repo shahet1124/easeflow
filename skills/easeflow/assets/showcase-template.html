@@ -19,6 +19,12 @@
     "summary": string,                      // one or two plain sentences
     "prototypeUrl": string|null,            // "prototype.html" when the themed prototype exists
     "metrics": [ { "label": string, "current": number, "proposed": number } ],
+    "coverage": {                           // from the feature ledger
+      "total": number, "kept": number,
+      "levels": [ { "label": "Visible"|"In context"|"More options"|"Advanced"|"Admin"|"Automatic"|"Merged"|"Needs your decision", "count": number } ]
+    },
+    "advancedMode": { "recommended": boolean, "reason": string },
+    "jobs": [ { "name": string, "tier": "Core"|"Regular", "currentSteps": number, "proposedSteps": number, "haroldBefore": boolean, "haroldAfter": boolean } ],
     "personas": [ {
       "name": string, "role": string, "kind": "core"|"library"|"guardrail"|"generated",
       "current":  { "score": number, "pass": boolean, "note": string },
@@ -171,6 +177,27 @@
   .changes .w { color: var(--muted); font-size: 15px; }
   .rule { display: inline-block; font-size: 12px; font-weight: 700; padding: 1px 7px; border-radius: 6px; background: var(--surface-2); color: var(--muted); margin: 6px 4px 0 0; }
 
+  /* Coverage */
+  .coverage { padding: 20px; }
+  .stack { display: flex; height: 22px; border-radius: 999px; overflow: hidden; background: var(--surface-2); }
+  .stack i { display: block; height: 100%; }
+  .legend { list-style: none; padding: 0; margin: 14px 0 0; display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 15px; }
+  .legend li { display: flex; align-items: center; gap: 8px; }
+  .legend b { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+  .mode-note { margin: 14px 0 0; color: var(--muted); font-size: 15px; }
+  .lv-0 { background: var(--accent); } .lv-1 { background: #5f8f80; } .lv-2 { background: #8fb3a6; }
+  .lv-3 { background: #b58d3d; } .lv-4 { background: #7d6aa8; } .lv-5 { background: #4f7fa3; }
+  .lv-6 { background: #9a9488; } .lv-7 { background: var(--fail); }
+
+  /* Jobs */
+  .jobs-wrap { padding: 8px 4px; overflow-x: auto; }
+  .jobs { width: 100%; border-collapse: collapse; font-size: 15px; }
+  .jobs th, .jobs td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--border); }
+  .jobs tr:last-child td { border-bottom: 0; }
+  .jobs th { color: var(--muted); font-weight: 600; font-size: 13px; }
+  .jobs .tier { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--accent); display: block; }
+  .ok { color: var(--pass); font-weight: 600; } .no { color: var(--fail); font-weight: 600; }
+
   footer { margin-top: 56px; color: var(--muted); font-size: 14px; text-align: center; }
 
   @media (max-width: 760px) {
@@ -200,6 +227,27 @@
   </header>
 
   <div class="metrics" id="metrics"></div>
+
+  <section id="coverage-section" hidden>
+    <h2>Nothing lost</h2>
+    <p class="lede" id="coverage-lede"></p>
+    <div class="card coverage">
+      <div class="stack" id="coverage-stack" role="img"></div>
+      <ul class="legend" id="coverage-legend"></ul>
+      <p class="mode-note" id="mode-note"></p>
+    </div>
+  </section>
+
+  <section id="jobs-section" hidden>
+    <h2>Every main job, before and after</h2>
+    <p class="lede">Steps from the home screen, and whether Harold can do it alone.</p>
+    <div class="card jobs-wrap">
+      <table class="jobs">
+        <thead><tr><th scope="col">Job</th><th scope="col">Steps</th><th scope="col">Harold today</th><th scope="col">Harold, proposed</th></tr></thead>
+        <tbody id="jobs-body"></tbody>
+      </table>
+    </div>
+  </section>
 
   <section>
     <h2>Can each buyer do it alone?</h2>
@@ -260,6 +308,26 @@
     { "label": "Decisions before value", "current": 7, "proposed": 1 },
     { "label": "Jargon terms", "current": 9, "proposed": 0 },
     { "label": "Menu items on first screen", "current": 14, "proposed": 4 }
+  ],
+  "coverage": {
+    "total": 86, "kept": 86,
+    "levels": [
+      { "label": "Visible", "count": 18 },
+      { "label": "In context", "count": 21 },
+      { "label": "More options", "count": 17 },
+      { "label": "Advanced", "count": 19 },
+      { "label": "Admin", "count": 6 },
+      { "label": "Automatic", "count": 3 },
+      { "label": "Merged", "count": 2 },
+      { "label": "Needs your decision", "count": 0 }
+    ]
+  },
+  "advancedMode": { "recommended": false, "reason": "Expert features sit in a few areas, so each area's own Advanced section is enough." },
+  "jobs": [
+    { "name": "Send emails to new prospects", "tier": "Core", "currentSteps": 11, "proposedSteps": 4, "haroldBefore": false, "haroldAfter": true },
+    { "name": "Reply to people who answered", "tier": "Core", "currentSteps": 5, "proposedSteps": 2, "haroldBefore": false, "haroldAfter": true },
+    { "name": "See what's working", "tier": "Core", "currentSteps": 4, "proposedSteps": 1, "haroldBefore": true, "haroldAfter": true },
+    { "name": "Add a teammate", "tier": "Regular", "currentSteps": 6, "proposedSteps": 3, "haroldBefore": false, "haroldAfter": true }
   ],
   "personas": [
     { "name": "Harold", "role": "70, wealthy, low tech comfort", "kind": "core",
@@ -352,6 +420,42 @@
     c.appendChild(nums);
     $("metrics").appendChild(c);
   });
+
+  var cov = data.coverage;
+  if (cov && cov.total) {
+    $("coverage-section").hidden = false;
+    $("coverage-lede").textContent = "All " + cov.kept + " of " + cov.total + " features are still in the product. They're just shown when they're needed.";
+    var stack = $("coverage-stack");
+    stack.setAttribute("aria-label", (cov.levels || []).map(function (l) { return l.label + " " + l.count; }).join(", "));
+    (cov.levels || []).forEach(function (l, i) {
+      if (!l.count) return;
+      var seg = el("i", "lv-" + (i % 8));
+      seg.style.width = (l.count / cov.total * 100) + "%";
+      seg.title = l.label + ": " + l.count;
+      stack.appendChild(seg);
+      var li = el("li");
+      li.appendChild(el("b", "lv-" + (i % 8)));
+      li.appendChild(document.createTextNode(l.label + " · " + l.count));
+      $("coverage-legend").appendChild(li);
+    });
+    var am = data.advancedMode;
+    if (am) $("mode-note").textContent = (am.recommended ? "Advanced view recommended: " : "No separate Advanced view needed: ") + am.reason;
+  }
+
+  if ((data.jobs || []).length) {
+    $("jobs-section").hidden = false;
+    data.jobs.forEach(function (j) {
+      var tr = el("tr");
+      var name = el("td");
+      name.appendChild(el("span", "tier", j.tier));
+      name.appendChild(document.createTextNode(j.name));
+      tr.appendChild(name);
+      tr.appendChild(el("td", null, j.currentSteps + " → " + j.proposedSteps));
+      tr.appendChild(el("td", j.haroldBefore ? "ok" : "no", j.haroldBefore ? "✓ Can do it" : "✕ Gets stuck"));
+      tr.appendChild(el("td", j.haroldAfter ? "ok" : "no", j.haroldAfter ? "✓ Can do it" : "✕ Gets stuck"));
+      $("jobs-body").appendChild(tr);
+    });
+  }
 
   (data.personas || []).forEach(function (p) {
     var c = el("div", "card persona");

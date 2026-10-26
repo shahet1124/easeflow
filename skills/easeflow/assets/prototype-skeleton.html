@@ -18,6 +18,10 @@
     leaves the screen. The message comes from the input's data-error attribute.
   - Progress is saved. On reload, a "Continue where you left off" banner appears.
   - The presenter bar (bottom) lets you jump between screens. Press H to hide it.
+  - <details class="more"> makes a "More options" or per-area "Advanced" section.
+  - Elements with data-advanced only appear when Advanced view is on. A button with
+    data-toggle-advanced switches it, and the choice is remembered. Delete the switch
+    if Phase 5 didn't recommend Advanced view.
 -->
 <style>
   /* THEME: replace these values with theme.json. Keep the variable names. */
@@ -104,6 +108,20 @@
   .link-btn { background: none; border: 0; font: inherit; color: var(--muted); text-decoration: underline; cursor: pointer; padding: 10px; min-height: 44px; }
   .btn:focus-visible, .link-btn:focus-visible, .app-nav button:focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
 
+  /* More options / per-area Advanced sections */
+  details.more { margin-top: 16px; border: 1px solid var(--border); border-radius: var(--radius-control); background: var(--surface); }
+  details.more > summary { cursor: pointer; padding: 12px 14px; font-weight: 600; min-height: 44px; list-style-position: inside; }
+  details.more > summary .what { font-weight: 400; color: var(--muted); }
+  details.more > div { padding: 0 14px 14px; }
+  .feature-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .feature-list li { display: flex; justify-content: space-between; gap: 12px; padding: 10px 12px; border-radius: var(--radius-control); background: var(--bg); }
+  .feature-list li span { color: var(--muted); font-size: .9rem; }
+
+  /* Advanced view: elements with data-advanced only show when it's on */
+  body:not(.advanced-view) [data-advanced] { display: none !important; }
+  .mode-badge { display: none; font-size: .75rem; font-weight: 700; padding: 3px 8px; border-radius: 999px; background: var(--primary); color: var(--on-primary); }
+  body.advanced-view .mode-badge { display: inline-block; }
+
   .notice { border-radius: var(--radius-control); padding: 12px 14px; margin-bottom: 20px; background: var(--bg); border: 1px solid var(--border); }
   .notice.success { border-color: var(--success); color: var(--success); }
   .sim { font-size: .8rem; color: var(--muted); }
@@ -149,11 +167,14 @@
   <div class="brand">
     <!-- THEME: inline the product's logo SVG here -->
     <span>Product</span>
+    <span class="mode-badge">Advanced view</span>
   </div>
-  <!-- Simplified nav: at most 5 items (R19). data-go targets screens. -->
+  <!-- Simplified nav: core objects and jobs, at most 5 items (R19, R22). data-go targets screens. -->
   <nav class="app-nav" aria-label="Main">
     <button type="button" data-go="home">Home</button>
-    <button type="button" data-go="advanced">Advanced</button>
+    <button type="button" data-go="area-1">Area one</button>
+    <!-- Only if Phase 5 recommended Advanced view; otherwise delete this button. -->
+    <button type="button" data-toggle-advanced aria-pressed="false">Advanced view: off</button>
   </nav>
 </header>
 
@@ -237,12 +258,41 @@
     </div>
   </section>
 
-  <section class="screen" data-screen="advanced" data-title="Advanced" data-signed-in>
-    <h1>Advanced</h1>
-    <p class="lead">Everything for experienced users, all in one place.</p>
+  <!-- One screen per top-level area (usually per core object). Every ledger feature for this area appears here. -->
+  <section class="screen" data-screen="area-1" data-title="Area one" data-signed-in>
+    <h1>Area one</h1>
+    <p class="lead">The regular features for this area, where people expect them.</p>
     <div class="card">
-      <h2>Moved here from the old menu</h2>
-      <p>List each moved feature, matching the report's "Where every feature went" table.</p>
+      <h2>Visible features</h2>
+      <ul class="feature-list">
+        <li>Regular feature <span>Visible</span></li>
+      </ul>
+      <details class="more">
+        <summary>More options <span class="what">(name what's inside)</span></summary>
+        <div>
+          <ul class="feature-list">
+            <li>Occasional feature <span>More options</span></li>
+          </ul>
+        </div>
+      </details>
+      <details class="more">
+        <summary>Advanced <span class="what">(this area's rare and expert features)</span></summary>
+        <div>
+          <ul class="feature-list">
+            <li>Advanced feature <span>Advanced</span></li>
+          </ul>
+        </div>
+      </details>
+      <div data-advanced>
+        <details class="more" open>
+          <summary>Advanced view tools</summary>
+          <div>
+            <ul class="feature-list">
+              <li>Bulk edit, dense table, shortcuts <span>Advanced view only adds</span></li>
+            </ul>
+          </div>
+        </details>
+      </div>
     </div>
   </section>
 
@@ -335,9 +385,26 @@
     if (t.hasAttribute("data-back")) { show(history_.pop() || ids[0], { back: true }); return; }
     if (t.hasAttribute("data-skip")) { show(home); return; }
     var scr = t.closest(".screen");
-    if (scr && !t.closest(".app-nav") && !validate(scr)) return;
+    if (scr && !validate(scr)) return;
     show(t.dataset.go);
   });
+
+  // Advanced view switch (only adds things marked data-advanced; remembered)
+  var MODE_KEY = KEY + ":advanced";
+  function setAdvanced(on) {
+    document.body.classList.toggle("advanced-view", on);
+    document.querySelectorAll("[data-toggle-advanced]").forEach(function (b) {
+      b.setAttribute("aria-pressed", String(on));
+      b.textContent = "Advanced view: " + (on ? "on" : "off");
+    });
+    try { localStorage.setItem(MODE_KEY, on ? "1" : "0"); } catch (e) {}
+  }
+  document.querySelectorAll("[data-toggle-advanced]").forEach(function (b) {
+    b.addEventListener("click", function () { setAdvanced(!document.body.classList.contains("advanced-view")); });
+  });
+  var savedMode = null;
+  try { savedMode = localStorage.getItem(MODE_KEY); } catch (e) {}
+  setAdvanced(savedMode === "1");
 
   jump.addEventListener("change", function () { show(jump.value); });
   document.getElementById("ef-restart").addEventListener("click", function () { clear(); history_ = []; show(ids[0]); });

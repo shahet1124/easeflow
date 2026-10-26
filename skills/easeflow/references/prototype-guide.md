@@ -1,6 +1,6 @@
 # Prototype guide
 
-`prototype.html` is EaseFlow's main deliverable: the customer's **own product**, in its **own look**, but with EaseFlow's simplified flow. When the founder opens it, they should think "that's our app, but simple", not "that's a mockup".
+`prototype.html` is EaseFlow's main deliverable: the customer's **own product**, in its **own look**, with **every feature still there**, restructured around EaseFlow's simplified flow. When the founder opens it, they should think "that's our app, but simple", not "that's a mockup".
 
 ## 1. Capture the theme
 
@@ -61,9 +61,22 @@ Start from `assets/prototype-skeleton.html`. It already handles screens, routing
 | Onboarding steps | 3–5 screens, "Step X of Y", one question each, one primary button, "Skip setup" (R7–R9). |
 | Commitment screens | Plain one-sentence reason, preview, and a way back for payment, permissions or sending (R14–R16). |
 | Core win | The moment of value, with a clear success confirmation and what happens next (R12). |
-| Home after setup | The calm everyday screen: at most 5 nav items, one obvious next action, no empty charts (R1, R19, R20). |
-| Advanced | Where every moved feature now lives, matching the "Where every feature went" table, so Alex can find them (R5). |
+| Home after setup | The calm everyday screen: the new top-level navigation, one obvious next action, core jobs one click away, no empty charts (R1, R19, R20, R22). |
+| Every core job | A fully clickable path from home to the job's outcome, with exact copy. |
+| Every area | One screen per top-level nav item (usually per core object), showing its regular features where the ledger puts them, its "More options" and its Advanced section listing that area's advanced features (R23, R24). |
+| Admin area | If the product has roles: the admin-only features, reached from the user/account menu (R26). |
+| Advanced view | Only if Phase 5 recommended it: the switch in the user menu, a visible "Advanced view" indicator, and the extra tools it adds on each area screen (R27). |
 | Returning user | A "Continue where you left off" banner shown when progress exists (R8). The skeleton handles this. |
+
+### Fidelity for big products
+
+Every feature in the ledger must be **visible in its new home** in the prototype, so the founder can see nothing was lost. Depth can vary:
+
+- **First run and core jobs:** fully clickable, end to end.
+- **Regular jobs:** the entry point and first screen are real; deeper steps can be a short "this continues as today" note.
+- **Advanced features:** shown in place (in More options, the area's Advanced section, or Advanced view) with their plain names. They don't need to work.
+
+Use the skeleton's helpers: `<details class="more">` for More options and Advanced sections, and `data-advanced` on anything that should only appear in Advanced view.
 
 ### Content rules
 
@@ -84,7 +97,10 @@ Start from `assets/prototype-skeleton.html`. It already handles screens, routing
 Open `prototype.html` in the browser and check every item:
 
 - [ ] Click through from the entry screen to the core win using only the primary buttons.
-- [ ] "Skip setup" lands on the home screen, and Advanced is reachable from there.
+- [ ] "Skip setup" lands on the home screen.
+- [ ] Every core job is clickable end to end from home.
+- [ ] Every feature in the ledger can be seen in its new home (spot-check at least one per area, and every "Needs your decision" item).
+- [ ] If Advanced view exists: switching it on only adds things, the indicator shows, and switching off restores Simple view exactly.
 - [ ] Back (in-page and browser) works on every screen.
 - [ ] Refresh mid-onboarding shows "Continue where you left off".
 - [ ] No horizontal scroll at 375px wide.

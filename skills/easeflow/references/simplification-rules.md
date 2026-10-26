@@ -57,8 +57,24 @@ Use these to design the proposed flow. Each rule names the persona that most nee
 
 **R21. Built for someone else to set up.** Where buyers delegate, allow setting up on someone's behalf and an invite that lands straight on the core win. (Linda)
 
+## Whole-product structure
+
+**R22. Navigate by the user's nouns and jobs.** Top-level navigation is built from the core objects (Patients, Orders, Courses) and core jobs, not from system modules or the org chart. At most 5 top-level items for the main role. (Harold, Literal Follower)
+
+**R23. Every feature has a home.** Each feature lives with the object or job it serves, at the lowest level of the disclosure ladder that works (`complexity-modes.md`). No orphan "Tools" or "Misc" menus. (Alex, Literal Follower)
+
+**R24. Learn once, use everywhere.** The same kind of task looks and works the same in every area: creating, editing, finding, deleting, exporting. "More options" and "Advanced" are always in the same place. (Harold, Grace)
+
+**R25. One name per concept.** A thing has the same plain name everywhere: in navigation, buttons, emails and help. (Ana, Literal Follower)
+
+**R26. Simplify per role.** Each role sees only its own jobs. Admin and owner features live in an admin area that others never see. (Linda, Harold)
+
+**R27. Advanced mode only adds.** If a global Advanced mode is justified, it adds tools without moving, renaming or changing anything in Simple view, and its state is always visible. (Alex, Harold)
+
+**R28. Recovery is always one step away.** Undo, edit, find what I made, and get help are reachable from wherever the user is. (Grace, Sam)
+
 ## Guardrails
 
-- Never remove a capability without listing it under "Recommend removing" with a reason.
+- Never remove a capability. At most, mark it "Needs your decision" in the feature ledger with a reason.
 - Never trade away accessibility for simplicity.
 - If a simplification needs a product decision (pricing, data policy, removing a feature), flag it as **Needs your decision** rather than assuming.
