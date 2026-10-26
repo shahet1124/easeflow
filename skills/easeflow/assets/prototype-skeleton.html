@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Product Prototype</title>
+<!-- THEME FONT: add the product's font link here if theme.json has font.importUrl -->
+<!--
+  EaseFlow prototype skeleton. See references/prototype-guide.md.
+
+  How it works:
+  - Each screen is <section class="screen" data-screen="id">. The first one is the start screen.
+  - Add data-onboarding to onboarding screens: "Step X of Y" and the progress bar fill in automatically
+    into any .step-count and .progress elements inside them.
+  - Buttons/links: data-go="id" goes to a screen, data-back goes back, data-skip goes to the
+    screen named in <body data-home="id">, data-restart clears progress.
+  - Inputs with data-validate="email" or data-validate="required" are checked before data-go
+    leaves the screen. The message comes from the input's data-error attribute.
+  - Progress is saved. On reload, a "Continue where you left off" banner appears.
+  - The presenter bar (bottom) lets you jump between screens. Press H to hide it.
+-->
+<style>
+  /* THEME: replace these values with theme.json. Keep the variable names. */
+  :root {
+    --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --base-size: 17px;
+    --primary: #2f5d50;
+    --on-primary: #ffffff;
+    --bg: #f6f7f9;
+    --surface: #ffffff;
+    --text: #15181d;
+    --muted: #5b6270;
+    --border: #dfe3ea;
+    --success: #1f7a4a;
+    --danger: #b3362b;
+    --radius-control: 10px;
+    --radius-card: 14px;
+    --shadow: 0 1px 3px rgba(20,24,30,.08);
+    --btn-height: 52px;
+    --btn-weight: 700;
+  }
+  /* THEME (dark): only if the product has a dark theme; otherwise delete this block. */
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #121417; --surface: #1c1f24; --text: #eef0f3; --muted: #a3a9b5; --border: #333842;
+      --primary: #7fc3ad; --on-primary: #0e1f1a; --shadow: none;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #121417; --surface: #1c1f24; --text: #eef0f3; --muted: #a3a9b5; --border: #333842;
+    --primary: #7fc3ad; --on-primary: #0e1f1a; --shadow: none;
+  }
+
+  * { box-sizing: border-box; }
+  html { font-size: var(--base-size); }
+  body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--font); line-height: 1.55; padding-bottom: 64px; }
+  a { color: var(--primary); }
+
+  /* Product chrome: restyle to match the product's real header */
+  .app-header { display: flex; align-items: center; gap: 16px; padding: 14px 20px; background: var(--surface); border-bottom: 1px solid var(--border); }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.1rem; }
+  .brand svg, .brand img { height: 28px; width: auto; }
+  .app-nav { display: flex; gap: 4px; margin-left: auto; flex-wrap: wrap; }
+  .app-nav button { background: none; border: 0; font: inherit; color: var(--muted); padding: 10px 12px; border-radius: var(--radius-control); cursor: pointer; min-height: 44px; }
+  .app-nav button[aria-current="page"] { color: var(--text); background: var(--bg); font-weight: 600; }
+  body:not(.signed-in) .app-nav { display: none; }
+
+  /* Screens */
+  main { max-width: 640px; margin: 0 auto; padding: 32px 16px; }
+  main.wide { max-width: 980px; }
+  .screen { display: none; }
+  .screen.active { display: block; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); box-shadow: var(--shadow); padding: 28px; }
+  h1 { font-size: 1.75rem; line-height: 1.2; margin: 0 0 8px; }
+  h2 { font-size: 1.25rem; margin: 0 0 8px; }
+  .lead { color: var(--muted); font-size: 1.05rem; margin: 0 0 24px; }
+
+  .progress { display: flex; gap: 6px; margin-bottom: 16px; }
+  .progress i { flex: 1; height: 6px; border-radius: 999px; background: var(--border); }
+  .progress i.on { background: var(--primary); }
+  .step-count { font-size: .85rem; font-weight: 600; color: var(--muted); }
+
+  label { display: block; font-weight: 600; margin: 0 0 6px; }
+  .field { margin-bottom: 20px; }
+  input, textarea, select {
+    width: 100%; font: inherit; color: var(--text); background: var(--surface);
+    border: 2px solid var(--border); border-radius: var(--radius-control); padding: 12px 14px; min-height: 48px;
+  }
+  textarea { min-height: 140px; resize: vertical; }
+  input:focus, textarea:focus, select:focus { outline: none; border-color: var(--primary); }
+  .hint { color: var(--muted); font-size: .9rem; margin-top: 6px; }
+  .error { color: var(--danger); font-size: .95rem; margin-top: 6px; display: none; }
+  .field.invalid input, .field.invalid textarea { border-color: var(--danger); }
+  .field.invalid .error { display: block; }
+
+  .actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-top: 8px; }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; border: 0; cursor: pointer; font: inherit;
+    font-weight: var(--btn-weight); min-height: var(--btn-height); padding: 0 24px; border-radius: var(--radius-control);
+  }
+  .btn-primary { background: var(--primary); color: var(--on-primary); }
+  .btn-primary.block { width: 100%; }
+  .btn-secondary { background: transparent; color: var(--text); border: 1px solid var(--border); }
+  .link-btn { background: none; border: 0; font: inherit; color: var(--muted); text-decoration: underline; cursor: pointer; padding: 10px; min-height: 44px; }
+  .btn:focus-visible, .link-btn:focus-visible, .app-nav button:focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
+
+  .notice { border-radius: var(--radius-control); padding: 12px 14px; margin-bottom: 20px; background: var(--bg); border: 1px solid var(--border); }
+  .notice.success { border-color: var(--success); color: var(--success); }
+  .sim { font-size: .8rem; color: var(--muted); }
+
+  .resume { display: none; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; max-width: 640px; margin: 16px auto 0; padding: 14px 16px; border-radius: var(--radius-card); background: var(--surface); border: 2px solid var(--primary); }
+  .resume.show { display: flex; }
+
+  /* Presenter bar: EaseFlow's, not the product's */
+  .ef-bar {
+    position: fixed; left: 50%; bottom: 12px; transform: translateX(-50%); z-index: 50; display: flex; gap: 8px; align-items: center;
+    background: #1d1b16; color: #f0ede6; border-radius: 999px; padding: 6px 8px 6px 14px; font: 13px/1.2 system-ui, sans-serif;
+    box-shadow: 0 6px 24px rgba(0,0,0,.25); max-width: calc(100% - 24px);
+  }
+  .ef-bar b { white-space: nowrap; }
+  .ef-bar select, .ef-bar button { font: inherit; background: #34312a; color: #f0ede6; border: 0; border-radius: 999px; padding: 6px 10px; min-height: 32px; max-width: 46vw; }
+  .ef-bar select { min-width: 120px; }
+  .ef-bar.hidden { display: none; }
+  @media (max-width: 480px) { .ef-bar b { display: none; } .card { padding: 20px; } }
+</style>
+</head>
+<body data-home="home">
+
+<header class="app-header">
+  <div class="brand">
+    <!-- THEME: inline the product's logo SVG here -->
+    <span>Product</span>
+  </div>
+  <!-- Simplified nav: at most 5 items (R19). data-go targets screens. -->
+  <nav class="app-nav" aria-label="Main">
+    <button type="button" data-go="home">Home</button>
+    <button type="button" data-go="advanced">Advanced</button>
+  </nav>
+</header>
+
+<div class="resume" id="resume" role="status">
+  <span>Welcome back. You were part-way through setup.</span>
+  <span>
+    <button type="button" class="btn btn-primary" id="resume-go">Continue where I left off</button>
+    <button type="button" class="link-btn" id="resume-dismiss">Start over</button>
+  </span>
+</div>
+
+<main>
+  <!-- ===== REPLACE FROM HERE: the proposed flow, one section per screen, exact copy from the report ===== -->
+
+  <section class="screen" data-screen="signup" data-title="Sign up">
+    <div class="card">
+      <h1>Create your account</h1>
+      <p class="lead">It takes less than a minute.</p>
+      <div class="field">
+        <label for="su-email">Your email address</label>
+        <input id="su-email" type="email" autocomplete="email" value="harold@example.com" data-validate="email" data-error="Please type a full email address, like name@example.com.">
+        <div class="error" role="alert"></div>
+      </div>
+      <div class="actions">
+        <button type="button" class="btn btn-primary block" data-go="ob-1">Create my account</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="screen" data-screen="ob-1" data-onboarding data-title="Setup: first question">
+    <div class="card">
+      <div class="progress"></div>
+      <div class="step-count"></div>
+      <h1>First setup question</h1>
+      <p class="lead">One plain sentence that says why this matters.</p>
+      <div class="field">
+        <label for="ob1-answer">Your answer</label>
+        <input id="ob1-answer" value="A realistic example answer" data-validate="required" data-error="Please type an answer so we can set this up for you.">
+        <div class="error" role="alert"></div>
+      </div>
+      <div class="actions">
+        <button type="button" class="btn btn-secondary" data-back>Back</button>
+        <button type="button" class="btn btn-primary" data-go="ob-2">Continue</button>
+        <button type="button" class="link-btn" data-skip>Skip setup</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="screen" data-screen="ob-2" data-onboarding data-title="Setup: confirm and do it">
+    <div class="card">
+      <div class="progress"></div>
+      <div class="step-count"></div>
+      <h1>Here's what will happen</h1>
+      <p class="lead">A preview of exactly what the product will do. Nothing happens until you press the button.</p>
+      <div class="actions">
+        <button type="button" class="btn btn-secondary" data-back>Back</button>
+        <button type="button" class="btn btn-primary" data-go="win">Do it now</button>
+        <button type="button" class="link-btn" data-skip>Skip setup</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="screen" data-screen="win" data-title="Core win">
+    <div class="card">
+      <div class="notice success">✓ Done. Here's what just happened, in one sentence.</div>
+      <h1>The core win, shown clearly</h1>
+      <p class="lead">What happens next, and where they'll see results.</p>
+      <div class="actions">
+        <button type="button" class="btn btn-primary block" data-go="home">Go to my home screen</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="screen" data-screen="home" data-title="Home" data-signed-in>
+    <h1>Good morning</h1>
+    <p class="lead">One obvious next action, and no empty charts.</p>
+    <div class="card">
+      <h2>Your results</h2>
+      <p>Realistic sample data for this product's domain.</p>
+      <button type="button" class="btn btn-primary">The one next action</button>
+    </div>
+  </section>
+
+  <section class="screen" data-screen="advanced" data-title="Advanced" data-signed-in>
+    <h1>Advanced</h1>
+    <p class="lead">Everything for experienced users, all in one place.</p>
+    <div class="card">
+      <h2>Moved here from the old menu</h2>
+      <p>List each moved feature, matching the report's "Where every feature went" table.</p>
+    </div>
+  </section>
+
+  <!-- ===== REPLACE TO HERE ===== -->
+</main>
+
+<div class="ef-bar" id="ef-bar" aria-label="Prototype controls">
+  <b>Prototype</b>
+  <select id="ef-jump" aria-label="Jump to screen"></select>
+  <button type="button" id="ef-restart">Restart</button>
+  <button type="button" id="ef-hide" title="Press H to show or hide">Hide</button>
+</div>
+
+<script>
+(function () {
+  var screens = Array.prototype.slice.call(document.querySelectorAll(".screen"));
+  var ids = screens.map(function (s) { return s.dataset.screen; });
+  var onboarding = screens.filter(function (s) { return s.hasAttribute("data-onboarding"); });
+  var home = document.body.dataset.home || ids[ids.length - 1];
+  var KEY = "easeflow-proto:" + location.pathname;
+  var history_ = [];
+  var current = null;
+
+  function save(id) { try { localStorage.setItem(KEY, id); } catch (e) {} }
+  function load() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
+  function clear() { try { localStorage.removeItem(KEY); } catch (e) {} }
+
+  // Step counters and progress bars for onboarding screens
+  onboarding.forEach(function (s, i) {
+    s.querySelectorAll(".step-count").forEach(function (n) { n.textContent = "Step " + (i + 1) + " of " + onboarding.length; });
+    s.querySelectorAll(".progress").forEach(function (p) {
+      p.textContent = "";
+      onboarding.forEach(function (_, j) { var b = document.createElement("i"); if (j <= i) b.className = "on"; p.appendChild(b); });
+    });
+  });
+
+  // Presenter jump menu
+  var jump = document.getElementById("ef-jump");
+  screens.forEach(function (s, i) {
+    var o = document.createElement("option");
+    o.value = s.dataset.screen;
+    o.textContent = (i + 1) + ". " + (s.dataset.title || s.dataset.screen);
+    jump.appendChild(o);
+  });
+
+  function show(id, opts) {
+    opts = opts || {};
+    if (ids.indexOf(id) === -1) id = ids[0];
+    if (current && current !== id && !opts.back) history_.push(current);
+    current = id;
+    screens.forEach(function (s) { s.classList.toggle("active", s.dataset.screen === id); });
+    var scr = screens[ids.indexOf(id)];
+    var signedIn = scr.hasAttribute("data-signed-in");
+    document.body.classList.toggle("signed-in", signedIn);
+    document.querySelector("main").classList.toggle("wide", signedIn);
+    document.querySelectorAll(".app-nav [data-go]").forEach(function (b) {
+      if (b.dataset.go === id) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current");
+    });
+    jump.value = id;
+    if (location.hash !== "#" + id) history.replaceState(null, "", "#" + id);
+    if (!opts.initial) save(id);
+    window.scrollTo(0, 0);
+    var h = scr.querySelector("h1");
+    if (h && !opts.initial) { h.setAttribute("tabindex", "-1"); h.focus({ preventScroll: true }); }
+  }
+
+  function validate(scr) {
+    var ok = true;
+    scr.querySelectorAll("[data-validate]").forEach(function (inp) {
+      var v = inp.value.trim();
+      var bad = inp.dataset.validate === "email" ? !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) : v === "";
+      var field = inp.closest(".field");
+      if (field) {
+        field.classList.toggle("invalid", bad);
+        var err = field.querySelector(".error");
+        if (err) err.textContent = bad ? (inp.dataset.error || "Please check this.") : "";
+      }
+      if (bad && ok) { inp.focus(); ok = false; }
+    });
+    return ok;
+  }
+
+  document.addEventListener("click", function (e) {
+    var t = e.target.closest("[data-go],[data-back],[data-skip],[data-restart]");
+    if (!t) return;
+    if (t.hasAttribute("data-restart")) { clear(); history_ = []; show(ids[0]); return; }
+    if (t.hasAttribute("data-back")) { show(history_.pop() || ids[0], { back: true }); return; }
+    if (t.hasAttribute("data-skip")) { show(home); return; }
+    var scr = t.closest(".screen");
+    if (scr && !t.closest(".app-nav") && !validate(scr)) return;
+    show(t.dataset.go);
+  });
+
+  jump.addEventListener("change", function () { show(jump.value); });
+  document.getElementById("ef-restart").addEventListener("click", function () { clear(); history_ = []; show(ids[0]); });
+  var bar = document.getElementById("ef-bar");
+  document.getElementById("ef-hide").addEventListener("click", function () { bar.classList.add("hidden"); });
+  document.addEventListener("keydown", function (e) {
+    if ((e.key === "h" || e.key === "H") && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)) bar.classList.toggle("hidden");
+  });
+  window.addEventListener("hashchange", function () { var id = location.hash.slice(1); if (id && id !== current) show(id); });
+
+  // Start: hash wins; otherwise offer to resume saved progress
+  var fromHash = location.hash.slice(1);
+  var saved = load();
+  if (fromHash && ids.indexOf(fromHash) !== -1) {
+    show(fromHash, { initial: true });
+  } else {
+    show(ids[0], { initial: true });
+    if (saved && saved !== ids[0] && saved !== home && ids.indexOf(saved) !== -1) {
+      var banner = document.getElementById("resume");
+      banner.classList.add("show");
+      document.getElementById("resume-go").addEventListener("click", function () { banner.classList.remove("show"); show(saved); });
+      document.getElementById("resume-dismiss").addEventListener("click", function () { banner.classList.remove("show"); clear(); });
+    }
+  }
+})();
+</script>
+</body>
+</html>

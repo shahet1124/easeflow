@@ -1,0 +1,475 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EaseFlow Showcase</title>
+<!--
+  EaseFlow showcase template.
+  To use: copy this file and replace ONLY the JSON inside <script id="easeflow-data">.
+  Escape "</" in strings as "<\/". All text is inserted with textContent, so no HTML is interpreted.
+
+  Data schema:
+  {
+    "product": string,
+    "coreWin": string,                      // the one outcome a buyer pays for
+    "date": "YYYY-MM-DD",
+    "mode": "Code only" | "Code + live app",
+    "verdict": { "current": "PASS"|"FAIL", "proposed": "PASS"|"FAIL", "reason": string },
+    "summary": string,                      // one or two plain sentences
+    "prototypeUrl": string|null,            // "prototype.html" when the themed prototype exists
+    "metrics": [ { "label": string, "current": number, "proposed": number } ],
+    "personas": [ {
+      "name": string, "role": string, "kind": "core"|"library"|"guardrail"|"generated",
+      "current":  { "score": number, "pass": boolean, "note": string },
+      "proposed": { "score": number, "pass": boolean, "note": string }
+    } ],
+    "currentFlow": [ {
+      "title": string, "detail": string,
+      "issues": [ { "severity": "Blocker"|"Major"|"Minor", "text": string, "personas": [string] } ]
+    } ],
+    "proposedFlow": [ { "title": string, "detail": string, "onboarding": boolean } ],
+    "onboarding": [ { "heading": string, "body": string, "field": string|null, "button": string } ],
+    "changes": [ { "title": string, "why": string, "rules": [string] } ]
+  }
+-->
+<style>
+  :root {
+    --bg: #f7f5f0;
+    --surface: #ffffff;
+    --surface-2: #efece4;
+    --text: #1d1b16;
+    --muted: #5d5a52;
+    --border: #dcd7cb;
+    --accent: #2f5d50;
+    --accent-ink: #ffffff;
+    --pass: #23784a;
+    --pass-bg: #e2f2e8;
+    --fail: #b3362b;
+    --fail-bg: #fbe5e2;
+    --major: #a0620a;
+    --major-bg: #fbefd9;
+    --minor-bg: #ebe9e3;
+    --bar-before: #c9c3b5;
+    --shadow: 0 1px 2px rgba(29,27,22,.06), 0 8px 24px rgba(29,27,22,.06);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #151513; --surface: #1f1f1c; --surface-2: #2a2a26; --text: #f0ede6; --muted: #aaa69c;
+      --border: #3a3934; --accent: #7fc3ad; --accent-ink: #10201b; --pass: #78d29f; --pass-bg: #1b3326;
+      --fail: #f19389; --fail-bg: #3a1f1c; --major: #f0b860; --major-bg: #3a2e18; --minor-bg: #2c2b27;
+      --bar-before: #55524a; --shadow: none;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #151513; --surface: #1f1f1c; --surface-2: #2a2a26; --text: #f0ede6; --muted: #aaa69c;
+    --border: #3a3934; --accent: #7fc3ad; --accent-ink: #10201b; --pass: #78d29f; --pass-bg: #1b3326;
+    --fail: #f19389; --fail-bg: #3a1f1c; --major: #f0b860; --major-bg: #3a2e18; --minor-bg: #2c2b27;
+    --bar-before: #55524a; --shadow: none;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font: 17px/1.55 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 40px 16px 80px; }
+  h1, h2, h3 { line-height: 1.2; margin: 0; }
+  h1 { font-size: clamp(28px, 5vw, 44px); letter-spacing: -0.02em; }
+  h2 { font-size: 24px; margin-bottom: 6px; }
+  .lede { color: var(--muted); margin: 6px 0 0; }
+  section { margin-top: 48px; }
+  .eyebrow { font-size: 13px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; box-shadow: var(--shadow); }
+
+  /* Hero */
+  .hero { display: grid; gap: 24px; grid-template-columns: 1.4fr 1fr; align-items: end; }
+  .meta { color: var(--muted); font-size: 15px; margin-top: 10px; }
+  .verdict { padding: 20px; display: grid; gap: 10px; }
+  .verdict-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .pill { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; font-size: 14px; padding: 4px 12px; border-radius: 999px; }
+  .pill.pass { background: var(--pass-bg); color: var(--pass); }
+  .pill.fail { background: var(--fail-bg); color: var(--fail); }
+  .verdict small { color: var(--muted); font-size: 14px; }
+
+  /* Metrics */
+  .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-top: 16px; }
+  .metric { padding: 16px; }
+  .metric .label { font-size: 14px; color: var(--muted); }
+  .metric .nums { font-size: 28px; font-weight: 700; display: flex; align-items: baseline; gap: 8px; margin-top: 4px; }
+  .metric .from { color: var(--muted); font-weight: 500; font-size: 20px; text-decoration: line-through; }
+
+  /* Personas */
+  .personas { display: grid; gap: 10px; margin-top: 16px; }
+  .persona { padding: 16px 18px; display: grid; grid-template-columns: 220px 1fr; gap: 16px; align-items: center; }
+  .persona .who strong { display: block; }
+  .persona .who span { color: var(--muted); font-size: 14px; }
+  .tag { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--accent); }
+  .bars { display: grid; gap: 6px; }
+  .bar-row { display: grid; grid-template-columns: 70px 1fr 90px; gap: 10px; align-items: center; font-size: 14px; }
+  .bar-row .k { color: var(--muted); }
+  .track { height: 12px; background: var(--surface-2); border-radius: 999px; overflow: hidden; }
+  .fill { height: 100%; border-radius: 999px; }
+  .fill.before { background: var(--bar-before); }
+  .fill.after { background: var(--accent); }
+  .res { font-weight: 600; text-align: right; white-space: nowrap; }
+  .res.pass { color: var(--pass); } .res.fail { color: var(--fail); }
+  .note { grid-column: 2; color: var(--muted); font-size: 14px; margin-top: -6px; }
+
+  /* Flows */
+  .toggle { display: inline-flex; background: var(--surface-2); border-radius: 999px; padding: 4px; margin-top: 16px; }
+  .toggle button { border: 0; background: transparent; color: var(--muted); font: inherit; font-size: 15px; font-weight: 600; padding: 8px 16px; border-radius: 999px; cursor: pointer; min-height: 40px; }
+  .toggle button[aria-pressed="true"] { background: var(--surface); color: var(--text); box-shadow: var(--shadow); }
+  .flows { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 16px; }
+  .flow { padding: 20px; }
+  .flow h3 { font-size: 18px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .flow h3 span { font-size: 14px; color: var(--muted); font-weight: 500; }
+  .steps { list-style: none; margin: 16px 0 0; padding: 0; counter-reset: step; }
+  .step { position: relative; padding: 0 0 18px 44px; counter-increment: step; }
+  .step::before {
+    content: counter(step); position: absolute; left: 0; top: 0; width: 30px; height: 30px; border-radius: 50%;
+    display: grid; place-items: center; font-size: 14px; font-weight: 700; background: var(--surface-2); color: var(--text);
+  }
+  .step::after { content: ""; position: absolute; left: 14px; top: 34px; bottom: 4px; width: 2px; background: var(--border); }
+  .step:last-child::after { display: none; }
+  .step.blocked::before { background: var(--fail-bg); color: var(--fail); }
+  .step.onboard::before { background: var(--accent); color: var(--accent-ink); }
+  .step .t { font-weight: 600; }
+  .step .d { color: var(--muted); font-size: 15px; }
+  .issue { margin-top: 6px; font-size: 14px; padding: 6px 10px; border-radius: 8px; }
+  .issue b { margin-right: 6px; }
+  .issue.Blocker { background: var(--fail-bg); color: var(--fail); }
+  .issue.Major { background: var(--major-bg); color: var(--major); }
+  .issue.Minor { background: var(--minor-bg); color: var(--muted); }
+  .issue .who { display: block; opacity: .85; font-size: 13px; }
+
+  /* Onboarding demo */
+  .demo { display: grid; grid-template-columns: 1fr 1.1fr; gap: 24px; align-items: center; margin-top: 16px; }
+  .device { padding: 28px; min-height: 360px; display: flex; flex-direction: column; }
+  .progress { display: flex; gap: 6px; margin-bottom: 20px; }
+  .progress i { flex: 1; height: 6px; border-radius: 999px; background: var(--surface-2); }
+  .progress i.on { background: var(--accent); }
+  .stepcount { font-size: 14px; color: var(--muted); font-weight: 600; }
+  .device h3 { font-size: 26px; margin: 6px 0 10px; }
+  .device p { margin: 0 0 18px; color: var(--muted); font-size: 18px; }
+  .fake-input { border: 2px solid var(--border); border-radius: 10px; padding: 14px; color: var(--muted); font-size: 17px; margin-bottom: 18px; background: var(--bg); }
+  .actions { margin-top: auto; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .btn { border: 0; border-radius: 12px; font: inherit; font-weight: 700; font-size: 18px; padding: 14px 22px; min-height: 52px; cursor: pointer; }
+  .btn.primary { background: var(--accent); color: var(--accent-ink); flex: 1; }
+  .btn.ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+  .btn:focus-visible, .toggle button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .linkish { background: none; border: 0; color: var(--muted); font: inherit; font-size: 15px; text-decoration: underline; cursor: pointer; padding: 8px; }
+  .proto-link { display: inline-flex; align-items: center; margin-top: 16px; text-decoration: none; }
+  .proto-link[hidden] { display: none; }
+  .done { text-align: center; margin: auto 0; }
+  .done .big { font-size: 48px; }
+
+  /* Changes */
+  .changes { list-style: none; padding: 0; margin: 16px 0 0; display: grid; gap: 10px; counter-reset: ch; }
+  .changes li { padding: 16px 18px 16px 60px; position: relative; counter-increment: ch; }
+  .changes li::before { content: counter(ch); position: absolute; left: 18px; top: 16px; font-size: 22px; font-weight: 800; color: var(--accent); }
+  .changes .t { font-weight: 700; }
+  .changes .w { color: var(--muted); font-size: 15px; }
+  .rule { display: inline-block; font-size: 12px; font-weight: 700; padding: 1px 7px; border-radius: 6px; background: var(--surface-2); color: var(--muted); margin: 6px 4px 0 0; }
+
+  footer { margin-top: 56px; color: var(--muted); font-size: 14px; text-align: center; }
+
+  @media (max-width: 760px) {
+    .hero, .flows, .demo { grid-template-columns: 1fr; }
+    .persona { grid-template-columns: 1fr; gap: 10px; }
+    .note { grid-column: 1; margin-top: 0; }
+    .flows.single-mobile .flow[hidden-mobile] { display: none; }
+  }
+  @media (min-width: 761px) { .toggle { display: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <div>
+      <div class="eyebrow">EaseFlow report</div>
+      <h1 id="product"></h1>
+      <p class="lede" id="summary"></p>
+      <div class="meta" id="meta"></div>
+      <a class="btn primary proto-link" id="proto-link" hidden>Open the clickable prototype →</a>
+    </div>
+    <div class="card verdict" aria-label="Verdict">
+      <div class="verdict-row"><span>Today</span><span id="v-current" class="pill"></span></div>
+      <div class="verdict-row"><span>With proposed flow</span><span id="v-proposed" class="pill"></span></div>
+      <small id="v-reason"></small>
+    </div>
+  </header>
+
+  <div class="metrics" id="metrics"></div>
+
+  <section>
+    <h2>Can each buyer do it alone?</h2>
+    <p class="lede">Score out of 100. Grey is today; green is the proposed flow.</p>
+    <div class="personas" id="personas"></div>
+  </section>
+
+  <section>
+    <h2>The flow, before and after</h2>
+    <p class="lede">From sign-up to the moment a customer gets what they paid for.</p>
+    <div class="toggle" role="group" aria-label="Choose flow">
+      <button type="button" data-show="current" aria-pressed="false">Today</button>
+      <button type="button" data-show="proposed" aria-pressed="true">Proposed</button>
+    </div>
+    <div class="flows single-mobile" id="flows">
+      <div class="card flow" data-flow="current">
+        <h3>Today <span id="cur-count"></span></h3>
+        <ol class="steps" id="current-flow"></ol>
+      </div>
+      <div class="card flow" data-flow="proposed">
+        <h3>Proposed <span id="pro-count"></span></h3>
+        <ol class="steps" id="proposed-flow"></ol>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>The new first-time setup at a glance</h2>
+    <p class="lede">Shown once. It can always be skipped, and it picks up where you left off. The clickable prototype shows it in the product's own design.</p>
+    <div class="demo">
+      <div class="card device" id="device" aria-live="polite"></div>
+      <div>
+        <p class="lede">This is what a new customer sees the first time they sign in: one question per screen, plain words, one obvious button.</p>
+        <p class="lede">Advanced options aren't gone. They're under <strong>Advanced</strong>, where experienced users expect them.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>What we'd change</h2>
+    <ol class="changes" id="changes"></ol>
+  </section>
+
+  <footer>Made with EaseFlow · <span id="foot-date"></span></footer>
+</div>
+
+<script type="application/json" id="easeflow-data">
+{
+  "product": "Reachly (example)",
+  "coreWin": "Send the first outreach email to a real prospect",
+  "date": "2026-10-27",
+  "mode": "Code + live app",
+  "verdict": { "current": "FAIL", "proposed": "PASS", "reason": "Today, Harold quits at 'Define your ICP'. The proposed flow asks one plain question instead." },
+  "prototypeUrl": null,
+  "summary": "An outreach tool that takes eleven steps before sending anything. The proposed flow gets a first email out in four.",
+  "metrics": [
+    { "label": "Steps to first email", "current": 11, "proposed": 4 },
+    { "label": "Decisions before value", "current": 7, "proposed": 1 },
+    { "label": "Jargon terms", "current": 9, "proposed": 0 },
+    { "label": "Menu items on first screen", "current": 14, "proposed": 4 }
+  ],
+  "personas": [
+    { "name": "Harold", "role": "70, wealthy, low tech comfort", "kind": "core",
+      "current": { "score": 28, "pass": false, "note": "Quit at step 3: didn't know what an ICP was." },
+      "proposed": { "score": 91, "pass": true, "note": "Sent a first email in under 3 minutes." } },
+    { "name": "The Literal Follower", "role": "Does only what the screen says", "kind": "core",
+      "current": { "score": 35, "pass": false, "note": "'Connect your inbox' didn't say which inbox." },
+      "proposed": { "score": 88, "pass": true, "note": "Every step names its action." } },
+    { "name": "Priya", "role": "45, CEO, two minutes to spare", "kind": "library",
+      "current": { "score": 52, "pass": false, "note": "No result in sight after 2 minutes." },
+      "proposed": { "score": 90, "pass": true, "note": "Saw a sample email for her business on screen one." } },
+    { "name": "Frank", "role": "62, the skeptic", "kind": "library",
+      "current": { "score": 40, "pass": false, "note": "Gmail permission asked with no reason." },
+      "proposed": { "score": 84, "pass": true, "note": "Permission explained; preview before send." } },
+    { "name": "Alex", "role": "Power user from a competitor", "kind": "guardrail",
+      "current": { "score": 80, "pass": true, "note": "Found everything in the sidebar." },
+      "proposed": { "score": 82, "pass": true, "note": "Skipped onboarding; branching is under Advanced." } }
+  ],
+  "currentFlow": [
+    { "title": "Sign up", "detail": "Email, password, company size, role", "issues": [] },
+    { "title": "Create a workspace", "detail": "Name, URL slug, timezone", "issues": [
+      { "severity": "Major", "text": "'Workspace' and 'slug' are never explained.", "personas": ["Harold", "Ana"] } ] },
+    { "title": "Define your ICP", "detail": "Industry, headcount, job titles, regions", "issues": [
+      { "severity": "Blocker", "text": "'ICP' is unexplained jargon; Harold stops here.", "personas": ["Harold", "Literal Follower"] } ] },
+    { "title": "Dashboard", "detail": "14 sidebar items, empty charts", "issues": [
+      { "severity": "Major", "text": "Empty charts and no obvious next step.", "personas": ["Harold", "Priya"] } ] },
+    { "title": "Connect inbox", "detail": "OAuth with broad Gmail access", "issues": [
+      { "severity": "Major", "text": "No reason given for full Gmail access.", "personas": ["Frank"] } ] },
+    { "title": "Build a sequence, then launch", "detail": "Templates, steps, delays, then a launch button", "issues": [
+      { "severity": "Minor", "text": "'Launch' doesn't say it sends real emails.", "personas": ["Grace"] } ] }
+  ],
+  "proposedFlow": [
+    { "title": "Sign up", "detail": "Email and password only", "onboarding": false },
+    { "title": "Who do you want to reach?", "detail": "One sentence, with an example filled in", "onboarding": true },
+    { "title": "Here's your first email", "detail": "Written for you; edit if you like", "onboarding": true },
+    { "title": "Send from your email", "detail": "One sentence on why, then connect", "onboarding": true },
+    { "title": "Preview and send", "detail": "Shows exactly who gets it", "onboarding": true }
+  ],
+  "onboarding": [
+    { "heading": "Who do you want to reach?", "body": "Describe them in your own words. We'll find people who match.", "field": "e.g. Owners of dental clinics in Texas", "button": "Find people" },
+    { "heading": "Here's your first email", "body": "We wrote it for you. Change anything you like.", "field": "Hi Dr. Lee, I help dental clinics fill empty appointment slots…", "button": "Looks good" },
+    { "heading": "Send it from your own email", "body": "So replies come straight to you. We only send the emails you approve.", "field": null, "button": "Connect my email" },
+    { "heading": "Ready to send to 25 people", "body": "You'll see every reply here. You can stop at any time.", "field": null, "button": "Send now" }
+  ],
+  "changes": [
+    { "title": "Replace 'Define your ICP' with one plain question", "why": "This is the step where Harold and the Literal Follower quit today.", "rules": ["R3", "R11"] },
+    { "title": "Show a ready-written first email before any setup", "why": "Priya sees value in seconds; Harold sees what he's paying for.", "rules": ["R2", "R7"] },
+    { "title": "Cut the first screen's menu from 14 items to 4", "why": "Fewer choices; advanced tools move under Advanced.", "rules": ["R5", "R19"] },
+    { "title": "Explain the email permission and preview before sending", "why": "Removes Frank's trust gap.", "rules": ["R14", "R15"] }
+  ]
+}
+</script>
+
+<script>
+(function () {
+  var data;
+  try { data = JSON.parse(document.getElementById("easeflow-data").textContent); }
+  catch (e) { document.body.textContent = "EaseFlow: could not read the report data."; return; }
+
+  function el(tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text != null) n.textContent = text;
+    return n;
+  }
+  function $(id) { return document.getElementById(id); }
+  function band(s) { return s >= 85 ? "Effortless" : s >= 70 ? "Easy" : s >= 50 ? "Effortful" : "Hard"; }
+  function verdictPill(node, v) {
+    var pass = v === "PASS";
+    node.className = "pill " + (pass ? "pass" : "fail");
+    node.textContent = pass ? "✓ Pass" : "✕ Fail";
+  }
+
+  document.title = (data.product || "EaseFlow") + " · EaseFlow";
+  $("product").textContent = data.product || "";
+  $("summary").textContent = data.summary || "";
+  $("meta").textContent = "Goal: " + (data.coreWin || "") + " · " + (data.mode || "") + " · " + (data.date || "");
+  $("foot-date").textContent = data.date || "";
+  if (data.prototypeUrl) { $("proto-link").href = data.prototypeUrl; $("proto-link").hidden = false; }
+  verdictPill($("v-current"), data.verdict && data.verdict.current);
+  verdictPill($("v-proposed"), data.verdict && data.verdict.proposed);
+  $("v-reason").textContent = (data.verdict && data.verdict.reason) || "";
+
+  (data.metrics || []).forEach(function (m) {
+    var c = el("div", "card metric");
+    c.appendChild(el("div", "label", m.label));
+    var nums = el("div", "nums");
+    nums.appendChild(el("span", "from", String(m.current)));
+    nums.appendChild(el("span", null, String(m.proposed)));
+    c.appendChild(nums);
+    $("metrics").appendChild(c);
+  });
+
+  (data.personas || []).forEach(function (p) {
+    var c = el("div", "card persona");
+    var who = el("div", "who");
+    who.appendChild(el("div", "tag", p.kind));
+    who.appendChild(el("strong", null, p.name));
+    who.appendChild(el("span", null, p.role));
+    c.appendChild(who);
+    var bars = el("div", "bars");
+    [["Today", p.current, "before"], ["Proposed", p.proposed, "after"]].forEach(function (r) {
+      var s = r[1] || { score: 0, pass: false };
+      var row = el("div", "bar-row");
+      row.appendChild(el("span", "k", r[0]));
+      var track = el("div", "track");
+      track.setAttribute("role", "img");
+      track.setAttribute("aria-label", r[0] + " score " + s.score + " of 100");
+      var fill = el("div", "fill " + r[2]);
+      fill.style.width = Math.max(0, Math.min(100, s.score)) + "%";
+      track.appendChild(fill);
+      row.appendChild(track);
+      row.appendChild(el("span", "res " + (s.pass ? "pass" : "fail"), s.score + " · " + (s.pass ? "✓ Pass" : "✕ Fail")));
+      bars.appendChild(row);
+    });
+    c.appendChild(bars);
+    var note = [p.current && p.current.note, p.proposed && p.proposed.note].filter(Boolean).join(" → ");
+    if (note) c.appendChild(el("div", "note", note + " (" + band(p.proposed ? p.proposed.score : 0) + ")"));
+    $("personas").appendChild(c);
+  });
+
+  (data.currentFlow || []).forEach(function (s) {
+    var issues = s.issues || [];
+    var blocked = issues.some(function (i) { return i.severity === "Blocker"; });
+    var li = el("li", "step" + (blocked ? " blocked" : ""));
+    li.appendChild(el("div", "t", s.title));
+    if (s.detail) li.appendChild(el("div", "d", s.detail));
+    issues.forEach(function (i) {
+      var box = el("div", "issue " + i.severity);
+      box.appendChild(el("b", null, i.severity));
+      box.appendChild(document.createTextNode(i.text));
+      if (i.personas && i.personas.length) box.appendChild(el("span", "who", "Affects: " + i.personas.join(", ")));
+      li.appendChild(box);
+    });
+    $("current-flow").appendChild(li);
+  });
+  $("cur-count").textContent = (data.currentFlow || []).length + " screens";
+
+  (data.proposedFlow || []).forEach(function (s) {
+    var li = el("li", "step" + (s.onboarding ? " onboard" : ""));
+    li.appendChild(el("div", "t", s.title));
+    if (s.detail) li.appendChild(el("div", "d", s.detail + (s.onboarding ? " · first-time setup" : "")));
+    $("proposed-flow").appendChild(li);
+  });
+  $("pro-count").textContent = (data.proposedFlow || []).length + " screens";
+
+  // Mobile toggle between flows
+  var toggles = document.querySelectorAll(".toggle button");
+  function showFlow(which) {
+    toggles.forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.show === which)); });
+    document.querySelectorAll("[data-flow]").forEach(function (f) {
+      if (f.dataset.flow === which) f.removeAttribute("hidden-mobile"); else f.setAttribute("hidden-mobile", "");
+    });
+  }
+  toggles.forEach(function (b) { b.addEventListener("click", function () { showFlow(b.dataset.show); }); });
+  showFlow("proposed");
+
+  // Onboarding walkthrough
+  var steps = data.onboarding || [];
+  var idx = 0;
+  var device = $("device");
+  function render() {
+    device.textContent = "";
+    if (idx >= steps.length) {
+      var done = el("div", "done");
+      done.appendChild(el("div", "big", "✓"));
+      done.appendChild(el("h3", null, "You're done"));
+      done.appendChild(el("p", null, "That's the whole setup. From here on, the customer lands straight on their results."));
+      var again = el("button", "btn ghost", "Start again");
+      again.type = "button";
+      again.addEventListener("click", function () { idx = 0; render(); });
+      done.appendChild(again);
+      device.appendChild(done);
+      return;
+    }
+    var s = steps[idx];
+    var prog = el("div", "progress");
+    steps.forEach(function (_, i) { prog.appendChild(el("i", i <= idx ? "on" : "")); });
+    device.appendChild(prog);
+    device.appendChild(el("div", "stepcount", "Step " + (idx + 1) + " of " + steps.length));
+    device.appendChild(el("h3", null, s.heading));
+    device.appendChild(el("p", null, s.body));
+    if (s.field) device.appendChild(el("div", "fake-input", s.field));
+    var actions = el("div", "actions");
+    if (idx > 0) {
+      var back = el("button", "btn ghost", "Back");
+      back.type = "button";
+      back.addEventListener("click", function () { idx--; render(); });
+      actions.appendChild(back);
+    }
+    var next = el("button", "btn primary", s.button);
+    next.type = "button";
+    next.addEventListener("click", function () { idx++; render(); });
+    actions.appendChild(next);
+    var skip = el("button", "linkish", "Skip setup");
+    skip.type = "button";
+    skip.addEventListener("click", function () { idx = steps.length; render(); });
+    actions.appendChild(skip);
+    device.appendChild(actions);
+  }
+  render();
+
+  (data.changes || []).forEach(function (c) {
+    var li = el("li", "card");
+    li.appendChild(el("div", "t", c.title));
+    li.appendChild(el("div", "w", c.why));
+    (c.rules || []).forEach(function (r) { li.appendChild(el("span", "rule", r)); });
+    $("changes").appendChild(li);
+  });
+})();
+</script>
+</body>
+</html>

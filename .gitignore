@@ -1,0 +1,12 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Local test runs of the skill
+easeflow-report/
+
+# Private idea and research notes
+myidea.txt
+Video/

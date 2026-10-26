@@ -1,0 +1,9 @@
+{
+  "name": "easeflow",
+  "version": "0.1.0",
+  "description": "Audit a finished product through the eyes of non-technical buyers, score how easy it is, and propose a simple, sellable flow with guided onboarding.",
+  "author": {
+    "name": "EaseFlow"
+  },
+  "keywords": ["ux", "onboarding", "usability", "personas", "simplification"]
+}
