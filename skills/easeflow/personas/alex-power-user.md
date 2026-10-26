@@ -36,4 +36,4 @@ Finds any advanced capability within **2 clicks** from a logical place (Settings
 Doesn't fail: every capability they need is still reachable, and simplification never traps them in a beginner mode.
 
 ## Voice
-> "Fine, skip the tour. Where's sequence branching? It was in the sidebar before. Okay, under Advanced on the campaign. Good."
+> "Fine, skip the tour. Where are the bulk edit and export tools? They were in the sidebar before. Okay, under Advanced. Good."

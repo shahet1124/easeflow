@@ -4,7 +4,7 @@ Use these to design the proposed flow. Each rule names the persona that most nee
 
 ## Shape of the flow
 
-**R1. One obvious first action.** The first screen after sign-up has one primary button that starts the core win. Everything else is secondary or hidden. (Harold, Priya)
+**R1. One obvious first action.** The first real screen (after sign-up, install or first open) has one primary button that starts the core win. Everything else is secondary or hidden. (Harold, Priya)
 > ChatGPT model: a single box that says what to do. No dashboard, no menu tour.
 
 **R2. Value before configuration.** Show a result, preview or sample before asking for setup. Settings come after the user has seen why they matter. (Priya, Harold)
@@ -27,9 +27,9 @@ Use these to design the proposed flow. Each rule names the persona that most nee
 
 ## Words
 
-**R10. Plain words, literal verbs.** Buttons say exactly what happens: "Send email", "Save and continue", "Add contact". No "Submit", "Go", "Let's roll". (Literal Follower, Ana)
+**R10. Plain words, literal verbs.** Buttons say exactly what happens: "Book appointment", "Save and continue", "Pay $49", "Add patient". No "Submit", "Go", "Let's roll". (Literal Follower, Ana)
 
-**R11. Rename jargon to the user's goal.** "ICP" becomes "Who do you want to reach?" "Sequence" becomes "Follow-up emails". "Workspace" becomes your company name. (Harold, Ana)
+**R11. Rename jargon to the user's goal.** "Workspace" becomes your company name. "Provision an instance" becomes "Set up your shop". "Sync ledger" becomes "Update my accounts". "SKU" becomes "Product code". "ICP" becomes "Who do you want to reach?" (Harold, Ana)
 
 **R12. Say what happens next.** After every action, confirm what was done and what comes next: "Saved. Next: choose who to send to." (Grace, Literal Follower)
 

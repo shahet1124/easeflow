@@ -4,18 +4,18 @@ Score every persona twice: once on the current flow, once on the proposed flow. 
 
 ## Metric definitions
 
-Count these along the path from sign-up to the core win.
+Count these along the path from first contact (landing page, install, invite or first open) to the core win.
 
 | Metric | Counts as one |
 |---|---|
 | **Step** | A distinct action the user must take: a screen change, a form submit, a required click. Optional actions don't count. |
 | **Decision** | A point where the user must choose between options and there's no recommended default. A pre-selected default with "Continue" isn't a decision. |
-| **Jargon term** | A word the persona wouldn't use in everyday speech to describe their own goal ("workspace", "sequence", "ICP", "webhook", "sync", "entity"). Count each distinct term once per screen. |
+| **Jargon term** | A word the persona wouldn't use in everyday speech to describe their own goal ("workspace", "instance", "SKU", "ledger", "webhook", "sync", "entity", "provision", "tenant"). Count each distinct term once per screen. |
 | **Vague instruction** | An instruction a literal reader could interpret more than one way ("Add your info", "Connect", "Set up"). |
 | **Dead end** | A screen where the next action isn't visibly labelled, or an empty state with no call to action. |
 | **Unhelpful error** | An error that's technical, blames the user, or doesn't say how to fix it. |
 | **Trust gap** | A commitment made blind: payment, a permission grant, sending or deleting without explanation, preview or undo. |
-| **Nav load** | Navigation items (sidebar, tabs, top menu) visible on the first screen after sign-up. |
+| **Nav load** | Navigation items (sidebar, tabs, top menu, bottom bar) visible on the first real screen after entry. |
 
 ## Persona score (0–100)
 

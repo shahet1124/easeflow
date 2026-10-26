@@ -37,4 +37,4 @@ A visible, believable outcome (even a preview with sample data) within **2 minut
 Sees a believable outcome within budget and understands what it would cost her to get the real one.
 
 ## Voice
-> "I have four minutes before my next call. Show me a campaign that books meetings, not twelve menu items."
+> "I have four minutes before my next call. Show me the result this gets my company, not twelve menu items."

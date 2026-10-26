@@ -30,7 +30,7 @@ Every primary instruction and button is understandable when **read word for word
 - [ ] Is there any idiom, slang or wordplay in instructions or buttons?
 - [ ] Are abbreviations spelled out?
 - [ ] Are sentences short, with one idea each?
-- [ ] Do labels describe the action ("Send email", not "Let's go!")?
+- [ ] Do labels describe the action ("Book appointment", not "Let's go!")?
 
 ## Pass condition
 Reaches the core win without misreading any instruction.

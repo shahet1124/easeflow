@@ -119,12 +119,31 @@
   }
   .ef-bar b { white-space: nowrap; }
   .ef-bar select, .ef-bar button { font: inherit; background: #34312a; color: #f0ede6; border: 0; border-radius: 999px; padding: 6px 10px; min-height: 32px; max-width: 46vw; }
+  /* Device frames: <body data-device="browser|phone|window"> */
+  @media (min-width: 520px) {
+    body[data-device="phone"] { background: #d9dce1; padding: 24px 0 88px; }
+    body[data-device="phone"] .device {
+      width: 390px; height: 800px; margin: 0 auto; border: 12px solid #15181d; border-radius: 44px;
+      overflow: auto; background: var(--bg); position: relative;
+    }
+    body[data-device="window"] { background: #d9dce1; padding: 24px 16px 88px; }
+    body[data-device="window"] .device {
+      max-width: 1100px; margin: 0 auto; border-radius: 10px; overflow: hidden; background: var(--bg);
+      box-shadow: 0 10px 40px rgba(0,0,0,.18); border: 1px solid #b9bec7;
+    }
+    body[data-device="window"] .device::before {
+      content: ""; display: block; height: 30px; background: #e9ebef; border-bottom: 1px solid #c9ced6;
+    }
+  }
+  body[data-device="phone"] main, body[data-device="phone"] main.wide { max-width: none; padding: 20px 16px 72px; }
+  body[data-device="phone"] .resume { margin: 12px; }
   .ef-bar select { min-width: 120px; }
   .ef-bar.hidden { display: none; }
   @media (max-width: 480px) { .ef-bar b { display: none; } .card { padding: 20px; } }
 </style>
 </head>
-<body data-home="home">
+<body data-home="home" data-device="browser">
+<div class="device">
 
 <header class="app-header">
   <div class="brand">
@@ -229,6 +248,7 @@
 
   <!-- ===== REPLACE TO HERE ===== -->
 </main>
+</div>
 
 <div class="ef-bar" id="ef-bar" aria-label="Prototype controls">
   <b>Prototype</b>
@@ -286,6 +306,8 @@
     if (location.hash !== "#" + id) history.replaceState(null, "", "#" + id);
     if (!opts.initial) save(id);
     window.scrollTo(0, 0);
+    var frame = document.querySelector(".device");
+    if (frame) frame.scrollTop = 0;
     var h = scr.querySelector("h1");
     if (h && !opts.initial) { h.setAttribute("tabindex", "-1"); h.focus({ preventScroll: true }); }
   }

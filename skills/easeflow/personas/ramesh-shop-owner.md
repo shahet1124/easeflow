@@ -37,4 +37,4 @@ Core win in **one sitting (about 15 minutes)**, using only information he alread
 Reaches the core win in one sitting without needing files or technical details.
 
 ## Voice
-> "It says 'Upload CSV'. I don't have a CSV. I have a notebook and my phone contacts."
+> "It says 'Upload CSV'. I don't have a CSV. I have a notebook and what's in my head."

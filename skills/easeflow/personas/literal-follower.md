@@ -39,4 +39,4 @@ Zero tolerance: every unstated step is a Blocker.
 Reaches the core win following only what's written on screen.
 
 ## Voice
-> "The screen says 'Import your contacts.' It doesn't say from where or in what format. There's a button labelled 'Browse'. Browse what? I stop here."
+> "The screen says 'Import your data.' It doesn't say which data, from where, or in what format. There's a button labelled 'Browse'. Browse what? I stop here."

@@ -35,7 +35,7 @@ Numbered, highest impact first. Max 10. Each one:
 
 ## Current flow
 
-<Mermaid flowchart of the current path, sign-up to core win. Mark the steps where personas quit with a ⛔ in the node label.>
+<Mermaid flowchart of the current path, first contact to core win. Mark the steps where personas quit with a ⛔ in the node label.>
 
 ## Proposed flow
 
@@ -50,7 +50,7 @@ Numbered, highest impact first. Max 10. Each one:
 
 | Feature / setting | Before | After | Reason |
 |---|---|---|---|
-| <name> | Sidebar | Advanced → Campaign settings | R5 |
+| <name> | Sidebar | Advanced → <section> | R5 |
 
 ## Metrics
 
@@ -58,9 +58,11 @@ Numbered, highest impact first. Max 10. Each one:
 
 ## Friction register
 
-| ID | Severity | Where | What happens | Personas | Evidence | Fix |
-|---|---|---|---|---|---|---|
-| F1 | Blocker | Sign-up → Create workspace | "Workspace" is undefined; Harold stops | Harold, Ana, Literal | `src/app/onboarding/page.tsx:42` | Top change #1 |
+| ID | Severity | Where | Failed question | What happens | Personas | Evidence | Fix |
+|---|---|---|---|---|---|---|---|
+| F1 | Blocker | Sign-up → Create workspace | Connect | "Workspace" is undefined; Harold stops | Harold, Ana, Literal | `src/app/onboarding/page.tsx:42` | Top change #1 |
+
+Failed question is one of the four walkthrough questions: Goal, Notice, Connect, Feedback.
 
 ## Persona walkthroughs
 
@@ -72,13 +74,17 @@ Numbered, highest impact first. Max 10. Each one:
 
 <Repeat for each persona. In each section, list any rounds of the re-test loop (Round 1 → fix → Round 2).>
 
+## Next: test with real people
+
+<Two sentences: EaseFlow's personas are a fast first pass and tend to be more successful than real users. Point to real-user-test.md and list the 2–3 findings that most need confirming.>
+
 ## Needs your decision
 
 <Product decisions EaseFlow can't make: pricing, removing features, data policy. "None" if empty.>
 
 ## Coverage and limits
 
-<What was checked and how (code paths, screenshots). What couldn't be verified (e.g. "code only; mobile layout not rendered"). Where the prototype's theme came from, any neutral defaults used because a value wasn't found, and any accessibility adjustments to brand colours or sizes.>
+<What was checked and how (code paths, screenshots). What couldn't be verified (e.g. "code only; mobile layout not rendered"). Whether the walkthroughs ran as blind subagents or in a single context. Where the two Harold runs disagreed, and which result was kept. Which accessibility checks were measured and which were judged. Where the prototype's theme came from, any neutral defaults used because a value wasn't found, and any accessibility adjustments to brand colours or sizes.>
 ```
 
 ## Mermaid conventions

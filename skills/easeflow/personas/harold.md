@@ -42,4 +42,4 @@ Core win within **5 steps and about 3 minutes** of signing up, with at most **1 
 Reaches the core win alone, with only the one-time guided onboarding, and within budget.
 
 ## Voice
-> "I've clicked 'Get started' and now it wants me to 'create a workspace'. What's a workspace? I just wanted to send the letters."
+> "I've clicked 'Get started' and now it wants me to 'create a workspace'. What's a workspace? I just wanted to book my check-up."
