@@ -1,0 +1,40 @@
+name: Persona proposal
+description: Suggest a new persona for the library.
+labels: [persona]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        A new persona should catch a kind of problem **no existing persona catches**. Please check the [current personas](https://github.com/shahet1124/easeflow/tree/main/skills/easeflow/personas) first.
+  - type: input
+    id: who
+    attributes:
+      label: Who they are
+      placeholder: e.g. Rosa, 52, runs a farm shop on a slow rural connection
+    validations:
+      required: true
+  - type: textarea
+    id: catches
+    attributes:
+      label: What problems they catch
+      description: Concrete problems in products that this persona would expose.
+    validations:
+      required: true
+  - type: textarea
+    id: gap
+    attributes:
+      label: Why no existing persona catches this
+    validations:
+      required: true
+  - type: textarea
+    id: gives-up
+    attributes:
+      label: Gives up when
+      description: Concrete, checkable triggers. "Page takes over 5 seconds to show anything", not "gets frustrated".
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Research or observation
+      description: Links to studies, guidelines, or what you've seen with real users.

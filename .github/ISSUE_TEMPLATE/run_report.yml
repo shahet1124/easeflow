@@ -1,0 +1,60 @@
+name: Run report
+description: EaseFlow ran, but got something wrong on a real product (a missed feature, a wrong finding, a bad redesign).
+labels: [run-report]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks! Real runs are how EaseFlow improves. **Don't paste private code or confidential reports.** Describe the problem in general terms.
+  - type: dropdown
+    id: type
+    attributes:
+      label: Product type
+      options:
+        - Web app / SaaS
+        - Mobile app
+        - Desktop app
+        - Store / marketplace / booking
+        - Content / learning / community
+        - Internal / admin tool
+        - Companion app
+        - Other
+    validations:
+      required: true
+  - type: dropdown
+    id: mode
+    attributes:
+      label: Mode
+      options:
+        - Code only
+        - Code + live app
+    validations:
+      required: true
+  - type: dropdown
+    id: problem
+    attributes:
+      label: What kind of problem
+      options:
+        - Missed a feature (not in the ledger)
+        - Dropped or hid a feature badly
+        - False finding (said something was confusing when it isn't)
+        - Missed finding (something real users struggle with)
+        - Persona acted out of character
+        - Redesign is worse or unrealistic
+        - Advanced view decision was wrong
+        - Prototype didn't match the product's design
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: What happened
+      description: What EaseFlow did, what it should have done, and how you know (e.g. a real user test).
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: Ideas for a fix
+      description: Optional. Which phase, rule or persona you think caused it.

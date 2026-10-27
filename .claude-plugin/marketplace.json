@@ -1,0 +1,18 @@
+{
+  "name": "easeflow",
+  "description": "EaseFlow: make any product easy for non-technical buyers without losing a single feature.",
+  "owner": {
+    "name": "Het Shah",
+    "url": "https://github.com/shahet1124"
+  },
+  "plugins": [
+    {
+      "name": "easeflow",
+      "source": "./",
+      "version": "0.1.0",
+      "description": "Persona-based simplicity audit with a full feature ledger and a clickable prototype in the product's own design.",
+      "category": "design",
+      "tags": ["ux", "usability", "onboarding", "personas", "accessibility"]
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+name: Bug report
+description: A template, script or instruction is broken or doesn't do what it says.
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What went wrong
+      description: What happened, and what did you expect instead?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: How to reproduce
+      description: Steps, the file involved, or the prompt you gave Claude.
+      placeholder: |
+        1. Ran "Run EaseFlow on this product" on a Flutter app
+        2. ...
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Workflow (SKILL.md)
+        - Personas
+        - Scoring or rules
+        - Prototype template
+        - Showcase template
+        - Install or plugin
+        - Validator or CI
+        - Docs
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: EaseFlow version
+      description: From .claude-plugin/plugin.json, or the commit you're on.
+  - type: input
+    id: claude
+    attributes:
+      label: Claude Code version and model
+      placeholder: e.g. Claude Code 2.1.300, Opus 5.5

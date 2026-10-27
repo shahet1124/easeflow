@@ -1,9 +1,14 @@
 {
   "name": "easeflow",
+  "displayName": "EaseFlow",
   "version": "0.1.0",
-  "description": "Audit a finished product through the eyes of non-technical buyers, score how easy it is, and propose a simple, sellable flow with guided onboarding.",
+  "description": "Make any product easy for non-technical buyers without losing a single feature. Persona-based audit, full feature ledger, and a clickable prototype in the product's own design.",
   "author": {
-    "name": "EaseFlow"
+    "name": "Het Shah",
+    "url": "https://github.com/shahet1124"
   },
-  "keywords": ["ux", "onboarding", "usability", "personas", "simplification"]
+  "homepage": "https://github.com/shahet1124/easeflow",
+  "repository": "https://github.com/shahet1124/easeflow",
+  "license": "MIT",
+  "keywords": ["ux", "usability", "onboarding", "personas", "simplification", "accessibility", "prototype", "cognitive-walkthrough"]
 }
